@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Inicio - Movimientos</title>
+  <style>
+    :root{--bg:#f6f8fb;--card:#fff;--accent:#0b5cff;--muted:#6b7280}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:24px;background:var(--bg);color:#111}
+    .container{max-width:960px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    h1{margin:0;font-size:20px}
+    .card{background:var(--card);padding:20px;border-radius:10px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    .big{font-size:48px;font-weight:800;color:var(--accent);}
+    .sub{color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:16px}
+    th,td{padding:10px 12px;border-bottom:1px solid #eef2f7;text-align:left}
+    td.right{text-align:right;font-family:monospace}
+    .summary{font-weight:700;margin-top:16px;display:flex;justify-content:space-between}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  {% load currency %}
+  <div class="container">
+    <header>
+      <h1>Movimientos</h1>
+      <div class="sub">Resumen rápido</div>
+    </header>
+
+    <div class="card">
+      <div class="big">Saldo inicial<br><span class="muted" style="font-size:20px">{{ saldo_inicial|currency_qtz }}</span></div>
+    </div>
+
+    <section style="margin-top:20px">
+      <div class="card">
+        <h2 style="margin:0 0 12px 0">Listado de Salidas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Monto (Q)</th>
+              <th>Descripción</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in salidas_page %}
+            <tr>
+              <td class="right">{{ s.monto|currency_qtz }}</td>
+              <td>{{ s.descripcion }}</td>
+              <td>{{ s.creado|date:"Y-m-d H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">No hay salidas registradas.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="summary">
+          <div class="muted">Suma de Salidas</div>
+          <div>{{ suma_salidas|currency_qtz }}</div>
+        </div>
+
+        <div class="summary" style="margin-top:8px;align-items:center;gap:12px">
+          <div>
+            <div class="muted">Saldo actual</div>
+            <div style="color:var(--accent);font-size:36px;font-weight:900">{{ saldo_actual|currency_qtz }}</div>
+          </div>
+
+          <div style="margin-left:auto">
+            {% if salidas_page.has_other_pages %}
+            <nav aria-label="Paginación">
+              <ul style="list-style:none;display:flex;gap:8px;margin:0;padding:0;align-items:center">
+                {% if salidas_page.has_previous %}
+                <li><a href="?page={{ salidas_page.previous_page_number }}">« Anterior</a></li>
+                {% else %}
+                <li class="muted">« Anterior</li>
+                {% endif %}
+
+                {% for num in salidas_page.paginator.page_range %}
+                  {% if salidas_page.number == num %}
+                    <li style="font-weight:700">{{ num }}</li>
+                  {% else %}
+                    {% comment %}Show first 2, last 2, and pages within +/-2 of current{% endcomment %}
+                    {% if num <= 2 or num > salidas_page.paginator.num_pages|add:'-2' %}
+                      <li><a href="?page={{ num }}">{{ num }}</a></li>
+                    {% else %}
+                      {% if num >= salidas_page.number|add:'-2' and num <= salidas_page.number|add:'2' %}
+                        <li><a href="?page={{ num }}">{{ num }}</a></li>
+                      {% elif forloop.first or forloop.last %}
+                        <li>…</li>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+
+                {% if salidas_page.has_next %}
+                <li><a href="?page={{ salidas_page.next_page_number }}">Siguiente »</a></li>
+                {% else %}
+                <li class="muted">Siguiente »</li>
+                {% endif %}
+              </ul>
+            </nav>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
