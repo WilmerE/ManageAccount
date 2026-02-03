@@ -26,6 +26,17 @@
     .no-doc{color:var(--muted);font-size:11px;font-style:italic}
     .summary{font-weight:700;margin-top:16px;display:flex;justify-content:space-between}
     .muted{color:var(--muted)}
+    .table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch}
+    @media (max-width:768px){
+      body{margin:12px}
+      .container{max-width:100%}
+      h1{font-size:18px}
+      .big{font-size:32px}
+      th,td{padding:8px 6px;font-size:13px}
+      .doc-badge{font-size:8px;padding:1px 4px}
+      .doc-link{font-size:18px}
+      .summary{flex-wrap:wrap;gap:8px}
+    }
   </style>
 </head>
 <body>
@@ -48,6 +59,7 @@
     <section style="margin-top:20px">
       <div class="card">
         <h2 style="margin:0 0 12px 0">Listado de Salidas</h2>
+        <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -84,7 +96,7 @@
             {% endfor %}
           </tbody>
         </table>
-
+        </div>
         <div class="summary">
           <div class="muted">Suma de Salidas</div>
           <div>{{ suma_salidas|currency_qtz }}</div>
