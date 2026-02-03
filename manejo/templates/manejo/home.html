@@ -16,6 +16,14 @@
     table{width:100%;border-collapse:collapse;margin-top:16px}
     th,td{padding:10px 12px;border-bottom:1px solid #eef2f7;text-align:left}
     td.right{text-align:right;font-family:monospace}
+    .doc-cell{display:flex;align-items:center;justify-content:center;gap:6px}
+    .doc-link{font-size:20px;text-decoration:none;cursor:pointer;opacity:0.7;transition:opacity 0.2s,transform 0.2s;display:inline-flex;align-items:center;gap:4px}
+    .doc-link:hover{opacity:1;transform:scale(1.1)}
+    .doc-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.3px}
+    .badge-pdf{background:#ef4444;color:#fff}
+    .badge-img{background:#10b981;color:#fff}
+    .badge-xml{background:#8b5cf6;color:#fff}
+    .no-doc{color:var(--muted);font-size:11px;font-style:italic}
     .summary{font-weight:700;margin-top:16px;display:flex;justify-content:space-between}
     .muted{color:var(--muted)}
   </style>
@@ -41,6 +49,7 @@
               <th>Monto (Q)</th>
               <th>Descripción</th>
               <th>Fecha</th>
+              <th style="text-align:center">Factura/Recibo</th>
             </tr>
           </thead>
           <tbody>
@@ -49,9 +58,24 @@
               <td class="right">{{ s.monto|currency_qtz }}</td>
               <td>{{ s.descripcion }}</td>
               <td>{{ s.creado|date:"Y-m-d H:i" }}</td>
+              <td style="text-align:center">
+                <div class="doc-cell">
+                  {% if forloop.counter0|divisibleby:3 %}
+                    <a href="#" class="doc-link" title="Ver factura PDF" onclick="return false;">📄<span class="doc-badge badge-pdf">PDF</span></a>
+                  {% elif forloop.counter0|divisibleby:5 %}
+                    <a href="#" class="doc-link" title="Ver foto de recibo" onclick="return false;">📷<span class="doc-badge badge-img">IMG</span></a>
+                  {% elif forloop.counter0|divisibleby:7 %}
+                    <a href="#" class="doc-link" title="Ver factura electrónica" onclick="return false;">📋<span class="doc-badge badge-xml">XML</span></a>
+                  {% elif forloop.counter0|divisibleby:2 %}
+                    <span class="no-doc">Sin documento</span>
+                  {% else %}
+                    <a href="#" class="doc-link" title="Ver documento adjunto" onclick="return false;">📄<span class="doc-badge badge-pdf">PDF</span></a>
+                  {% endif %}
+                </div>
+              </td>
             </tr>
             {% empty %}
-            <tr><td colspan="3">No hay salidas registradas.</td></tr>
+            <tr><td colspan="4">No hay salidas registradas.</td></tr>
             {% endfor %}
           </tbody>
         </table>
