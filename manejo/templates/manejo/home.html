@@ -32,7 +32,12 @@
   {% load currency %}
   <div class="container">
     <header>
-      <h1>Movimientos</h1>
+      <div>
+        <h1>{{ entrada.titulo|default:"Movimientos" }}</h1>
+        {% if entrada.contenido %}
+        <p style="margin:4px 0 0 0;color:var(--muted);font-size:14px">{{ entrada.contenido }}</p>
+        {% endif %}
+      </div>
       <div class="sub">Resumen rápido</div>
     </header>
 

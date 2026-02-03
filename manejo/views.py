@@ -2,10 +2,13 @@ from django.shortcuts import render
 from django.db.models import Sum
 from django.core.paginator import Paginator
 from decimal import Decimal
-from .models import Ingreso, Salida
+from .models import Ingreso, Salida, Entrada
 
 
 def home(request):
+    # Obtener la entrada más reciente para el título y descripción del proyecto
+    entrada = Entrada.objects.order_by('-creado').first()
+    
     # Suma total de ingresos (saldo inicial)
     inicial = Ingreso.objects.aggregate(total=Sum('monto'))['total'] or Decimal('0')
 
@@ -35,6 +38,7 @@ def home(request):
     actual = inicial - suma_salidas
 
     context = {
+        'entrada': entrada,
         'saldo_inicial': inicial,
         'salidas_page': page_obj,
         'suma_salidas': suma_salidas,
